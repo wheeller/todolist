@@ -19,15 +19,15 @@ public class TodoController {
 
     @GetMapping("/todo")
     public ResponseEntity<List<TodoItem>> getList(HttpServletRequest request){
-        TodoItem.Status status;
+        TodoItem.Status status = null;
         String statusParam = request.getParameter("s");
 
-        if (statusParam == null || statusParam.equalsIgnoreCase("all"))
-            status = null;
+        if (statusParam == null || statusParam.equalsIgnoreCase("new"))
+            status = TodoItem.Status.NEW;
         else if (statusParam.equalsIgnoreCase("done"))
             status = TodoItem.Status.DONE;
-        else
-            status = TodoItem.Status.NEW;
+//        else if (statusParam.equalsIgnoreCase("all"))
+//            status = null;
 
         return new ResponseEntity<>(todoService.getList(status), HttpStatus.OK);
     }
