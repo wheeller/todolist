@@ -1,23 +1,30 @@
 package todolist;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "todoItem", schema = "", catalog = "hibernatedb")
+@Table(name = "todoItem", catalog = "hibernatedb")
+@Data
 public class TodoItem {
+    enum Status {NEW,DONE}
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, insertable = true, updatable = true)
+    @Column(name = "id", nullable = false)
     private int id;
+
     @Basic
-    @Column(name = "create_date_time", nullable = false, insertable = true, updatable = true)
+    @Column(name = "create_date_time", nullable = false)
     private OffsetDateTime createDateTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 8)
+    private Status status;
+
     @Basic
-    @Column(name = "status", nullable = false, insertable = true, updatable = true)
-    private String status;
-    @Basic
-    @Column(name = "content", nullable = false, insertable = true, updatable = true)
+    @Column(name = "content", nullable = false)
     private String content;
 
     public TodoItem() {
@@ -25,52 +32,7 @@ public class TodoItem {
 
     public TodoItem(String content) {
         this.createDateTime = java.time.OffsetDateTime.now();
-        this.status = "New";
+        this.status = Status.NEW;
         this.content = content;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public OffsetDateTime getCreateDate() {
-        return createDateTime;
-    }
-
-    public void setCreateDate(OffsetDateTime createDateTime) {
-        this.createDateTime = createDateTime;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    @Override
-    public String toString(){
-        return "id: " + id + "\nCreation date: " + createDateTime
-                + "\nStatus: " + status + "\nContent: " + content + "\n";
-    }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TodoItem todoItem = (TodoItem) o;
-        return id == todoItem.id && createDateTime.equals(todoItem.createDateTime) && status.equals(todoItem.status) && content.equals(todoItem.content);
     }
 }
