@@ -1,5 +1,6 @@
 package todolist;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,31 +9,51 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class TodoController {
     final TodoService todoService;
 
-    public TodoController(TodoService todoService) {
+    private TodoController(TodoService todoService) {
         this.todoService = todoService;
     }
 
+    @Autowired
+    private Mapper mapper;
+
     @GetMapping("/todo")
-    public ResponseEntity<List<TodoItem>> getList(HttpServletRequest request){
-        TodoItem.Status status = null;
+    @ResponseBody
+    public ResponseEntity<List<TodoItemDTO>> getTodoList(HttpServletRequest request){
+        Status status = null;
         String statusParam = request.getParameter("s");
 
         if (statusParam == null || statusParam.equalsIgnoreCase("new"))
-            status = TodoItem.Status.NEW;
+            status = Status.NEW;
         else if (statusParam.equalsIgnoreCase("done"))
-            status = TodoItem.Status.DONE;
+            status = Status.DONE;
 //        else if (statusParam.equalsIgnoreCase("all"))
 //            status = null;
 
-        return new ResponseEntity<>(todoService.getList(status), HttpStatus.OK);
+        return new ResponseEntity<>(todoService.getTodoList(status)
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList())
+                    ,HttpStatus.OK);
     }
+
+    @PostMapping("/todo")
+    public ResponseEntity<TodoItemDTO> createItem(@RequestBody TodoItemDTO todoItemDTO){
+        int itemId = todoService.add(todoItemDTO.getContent());
+
+        UriComponents uriComponents = UriComponentsBuilder.fromPath("todo/{itemId}").buildAndExpand(itemId);
+        var location = uriComponents.toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+
     @GetMapping("/todo/{itemId}")
-    public ResponseEntity<TodoItem> getItem(@PathVariable int itemId){
+    public ResponseEntity<?> getItem(@PathVariable int itemId){
         return new ResponseEntity<>(todoService.get(itemId), HttpStatus.OK);
     }
 
@@ -48,19 +69,10 @@ public class TodoController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping(value="/todo")
-    public ResponseEntity<TodoItem> createItem(@RequestBody TodoItem todoItem){
-        int itemId = todoService.add(todoItem.getContent());
-
-        UriComponents uriComponents = UriComponentsBuilder.fromPath("todo/{itemId}").buildAndExpand(itemId);
-        var location = uriComponents.toUri();
-
-        return ResponseEntity.created(location).build();
-    }
 
     @PutMapping(value="todo/{itemId}")
-    public ResponseEntity<?> changeItem(@PathVariable int itemId, @RequestBody TodoItem todoItem){
-        todoService.modify(itemId, todoItem.getContent());
+    public ResponseEntity<?> changeItem(@PathVariable int itemId, @RequestBody TodoItemDTO todoItemDTO){
+        todoService.modify(itemId, mapper.fromDto(todoItemDTO).getContent());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

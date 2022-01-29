@@ -4,12 +4,12 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "todoItem", catalog = "hibernatedb")
 @Data
 public class TodoItem {
-    enum Status {NEW,DONE}
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -33,6 +33,6 @@ public class TodoItem {
     public TodoItem(String content) {
         this.createDateTime = java.time.OffsetDateTime.now();
         this.status = Status.NEW;
-        this.content = content;
+        this.content = Objects.requireNonNull(content);
     }
 }

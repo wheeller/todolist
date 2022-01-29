@@ -56,7 +56,7 @@ public class TodoService {
         transaction = session.beginTransaction();
         TodoItem todoItem = session.get(TodoItem.class, todoItemId);
 
-        todoItem.setStatus(TodoItem.Status.DONE);
+        todoItem.setStatus(Status.DONE);
 
         session.save(todoItem);
         transaction.commit();
@@ -78,17 +78,18 @@ public class TodoService {
         session.close();
     }
 
-    public List<TodoItem> getList(TodoItem.Status status) {
+    public List<TodoItem> getTodoList(Status status) {
         Session session = sessionFactory.openSession();
         List<TodoItem> todoItemList;
         session.beginTransaction();
 
         if (status == null)
             todoItemList = session.
-                    createQuery("FROM TodoItem order by createDateTime").list();
+                    createQuery("FROM TodoItem order by createDateTime", TodoItem.class).list();
         else
             todoItemList = session.
-                    createQuery("FROM TodoItem WHERE status = '" + status + "' order by createDateTime").list();
+                    createQuery("FROM TodoItem WHERE status = '" + status + "' order by createDateTime",
+                            TodoItem.class).list();
 
         session.close();
         return todoItemList;
