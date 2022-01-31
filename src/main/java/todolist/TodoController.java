@@ -1,6 +1,5 @@
 package todolist;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +14,12 @@ import java.util.stream.Collectors;
 public class TodoController {
     final TodoService todoService;
 
-    private TodoController(TodoService todoService) {
+    private TodoController(TodoService todoService, Mapper mapper) {
         this.todoService = todoService;
+        this.mapper = mapper;
     }
 
-    @Autowired
-    private Mapper mapper;
+    private final Mapper mapper;
 
     @GetMapping("/todo")
     @ResponseBody
@@ -32,8 +31,6 @@ public class TodoController {
             status = Status.NEW;
         else if (statusParam.equalsIgnoreCase("done"))
             status = Status.DONE;
-//        else if (statusParam.equalsIgnoreCase("all"))
-//            status = null;
 
         return new ResponseEntity<>(todoService.getTodoList(status)
                 .stream()
