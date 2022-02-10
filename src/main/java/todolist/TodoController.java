@@ -8,19 +8,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class TodoController {
     final TodoService todoService;
 
-    private TodoController(TodoService todoService, Mapper mapper) {
+ private TodoController(TodoService todoService) {
         this.todoService = todoService;
-        this.mapper = mapper;
     }
 
-    private final Mapper mapper;
-
+    // GET all
     @GetMapping("/todo")
     @ResponseBody
     public ResponseEntity<List<TodoItemDTO>> getTodoList(HttpServletRequest request){
@@ -32,44 +29,49 @@ public class TodoController {
         else if (statusParam.equalsIgnoreCase("done"))
             status = Status.DONE;
 
-        return new ResponseEntity<>(todoService.getTodoList(status)
-                .stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList())
-                    ,HttpStatus.OK);
+        return new ResponseEntity<>(todoService.findTodoItemByStatus(status)
+                ,HttpStatus.OK);
     }
 
+    // CREATE
     @PostMapping("/todo")
     public ResponseEntity<TodoItemDTO> createItem(@RequestBody TodoItemDTO todoItemDTO){
-        int itemId = todoService.add(todoItemDTO.getContent());
-
+        Integer itemId = todoService.addTodoItem(todoItemDTO);
         UriComponents uriComponents = UriComponentsBuilder.fromPath("todo/{itemId}").buildAndExpand(itemId);
         var location = uriComponents.toUri();
 
         return ResponseEntity.created(location).build();
     }
 
+    // GET by id
     @GetMapping("/todo/{itemId}")
-    public ResponseEntity<?> getItem(@PathVariable int itemId){
-        return new ResponseEntity<>(todoService.get(itemId), HttpStatus.OK);
+    public ResponseEntity<?> getItem(@PathVariable Integer itemId){
+        return new ResponseEntity<>(todoService.getTodoItemById(itemId), HttpStatus.OK);
     }
 
     @DeleteMapping("/todo/{itemId}")
-    public ResponseEntity<?> detItem(@PathVariable int itemId){
-        todoService.del(itemId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> detItem(@PathVariable Integer itemId){
+        if (todoService.delTodoItemById(itemId))
+            return new ResponseEntity<>(HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    // set status DONE
     @PostMapping("/todo/{itemId}/finish")
     public ResponseEntity<?> finishItem(@PathVariable int itemId){
-        todoService.finish(itemId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (todoService.finishTodoItemById(itemId))
+            return new ResponseEntity<>(HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
+    // UPDATE
     @PutMapping(value="todo/{itemId}")
     public ResponseEntity<?> changeItem(@PathVariable int itemId, @RequestBody TodoItemDTO todoItemDTO){
-        todoService.modify(itemId, mapper.fromDto(todoItemDTO).getContent());
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (todoService.updateTodoItem(itemId, todoItemDTO))
+            return new ResponseEntity<>(HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

@@ -7,13 +7,13 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "todoItem", catalog = "hibernatedb")
+@Table(name = "todoItem", schema = "my", catalog = "hibernatedb")
 @Data
 public class TodoItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private int id;
+    private Integer id;
 
     @Basic
     @Column(name = "create_date_time", nullable = false)

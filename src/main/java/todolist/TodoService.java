@@ -1,97 +1,62 @@
 package todolist;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @org.springframework.context.annotation.Configuration
 public class TodoService {
-    private static SessionFactory sessionFactory;
+    final TodoItemRepository todoItemRepository;
+    private final Mapper mapper;
 
-    public TodoService() {
-        sessionFactory = new Configuration().configure().buildSessionFactory();
+    public TodoService(Mapper mapper, TodoItemRepository todoItemRepository) {
+        this.mapper = mapper;
+        this.todoItemRepository = todoItemRepository;
     }
 
-    public Integer add(String content) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction;
-        Integer todoItemId;
-
-        transaction = session.beginTransaction();
-        TodoItem todoItem = new TodoItem(content);
-        todoItemId = (Integer) session.save(todoItem);
-        if (todoItemId != null)
-            todoItem.setId(todoItemId);
-        transaction.commit();
-        session.close();
-        return todoItemId;
+    public Integer addTodoItem(TodoItemDTO todoItemDTO){
+        return todoItemRepository.save(mapper.fromDto(todoItemDTO)).getId();
     }
 
-    public TodoItem get(Integer todoItemId) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        TodoItem todoItem = session.get(TodoItem.class, todoItemId);
-        session.close();
-        return todoItem;
+    public TodoItemDTO getTodoItemById(Integer id){
+        Optional<TodoItem> todoItem = todoItemRepository.findById(id);
+        return todoItem.map(mapper::toDto).orElse(null);
     }
 
-
-    public void del(Integer todoItemId) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction;
-        transaction = session.beginTransaction();
-        TodoItem todoItem = session.get(TodoItem.class, todoItemId);
-        session.delete(todoItem);
-        transaction.commit();
-        session.close();
-    }
-
-    public void finish(Integer todoItemId) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction;
-
-        transaction = session.beginTransaction();
-        TodoItem todoItem = session.get(TodoItem.class, todoItemId);
-
-        todoItem.setStatus(Status.DONE);
-
-        session.save(todoItem);
-        transaction.commit();
-        session.close();
-    }
-
-    public void modify(Integer todoItemId, String content) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction;
-
-        transaction = session.beginTransaction();
-        TodoItem todoItem = session.get(TodoItem.class, todoItemId);
-
-        if (todoItem != null) {
-            todoItem.setContent(content);
-            session.save(todoItem);
-            transaction.commit();
+    public boolean delTodoItemById(Integer id){
+        if (todoItemRepository.findById(id).isPresent()) {
+            todoItemRepository.deleteById(id);
+            return true;
         }
-        session.close();
+         else
+             return false;
     }
 
-    public List<TodoItem> getTodoList(Status status) {
-        Session session = sessionFactory.openSession();
-        List<TodoItem> todoItemList;
-        session.beginTransaction();
+    public boolean finishTodoItemById(Integer id){
+        Optional<TodoItem> todoItem = todoItemRepository.findById(id);
+        if (todoItem.isPresent()) {
+            TodoItem i = todoItem.get();
+            i.setStatus(Status.DONE);
+            todoItemRepository.save(i);
+            return true;
+        } else
+            return false;
+    }
 
-        if (status == null)
-            todoItemList = session.
-                    createQuery("FROM TodoItem order by createDateTime", TodoItem.class).list();
-        else
-            todoItemList = session.
-                    createQuery("FROM TodoItem WHERE status = '" + status + "' order by createDateTime",
-                            TodoItem.class).list();
+    public boolean updateTodoItem(Integer id, TodoItemDTO todoItemDTO){
+        Optional<TodoItem> todoItemFromDB = todoItemRepository.findById(id);
+        if (todoItemFromDB.isPresent()){
+            todoItemFromDB.get().setContent(todoItemDTO.getContent());
+            todoItemRepository.save(todoItemFromDB.get());
+            return true;
+        } else
+            return false;
+    }
 
-        session.close();
-        return todoItemList;
+    public List<TodoItemDTO> findTodoItemByStatus(Status status){
+        return todoItemRepository.findByStatusOrderByCreateDateTime(status)
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 }
