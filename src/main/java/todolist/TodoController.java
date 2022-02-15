@@ -7,6 +7,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,17 +21,13 @@ public class TodoController {
     // GET all
     @GetMapping("/todo")
     @ResponseBody
-    public ResponseEntity<List<TodoItemDTO>> getTodoList(HttpServletRequest request){
-        Status status = null;
-        String statusParam = request.getParameter("s");
-
-        if (statusParam == null || statusParam.equalsIgnoreCase("new"))
-            status = Status.NEW;
-        else if (statusParam.equalsIgnoreCase("done"))
-            status = Status.DONE;
-
-        return new ResponseEntity<>(todoService.findTodoItemByStatus(status)
-                ,HttpStatus.OK);
+    public ResponseEntity<List<TodoItemDTO>> getTodoList(
+            @RequestParam(name = "s", required = false, defaultValue = "new") String status){
+     if (status.equalsIgnoreCase("new") || status.equalsIgnoreCase("done")) {
+         return new ResponseEntity<>(todoService.findTodoItemByStatus(Status.getFromJson(status))
+                 , HttpStatus.OK);
+     } else
+         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     // CREATE
@@ -38,7 +35,7 @@ public class TodoController {
     public ResponseEntity<TodoItemDTO> createItem(@RequestBody TodoItemDTO todoItemDTO){
         Integer itemId = todoService.addTodoItem(todoItemDTO);
         UriComponents uriComponents = UriComponentsBuilder.fromPath("todo/{itemId}").buildAndExpand(itemId);
-        var location = uriComponents.toUri();
+        URI location = uriComponents.toUri();
 
         return ResponseEntity.created(location).build();
     }
