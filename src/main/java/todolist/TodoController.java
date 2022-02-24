@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class TodoController {
          return new ResponseEntity<>(todoService.findTodoItemByStatus(Status.getFromJson(status))
                  , HttpStatus.OK);
      } else
-         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new IllegalArgumentException("status parameter is invalid, use NEW оr DONE");
     }
 
     // CREATE
@@ -36,7 +35,6 @@ public class TodoController {
         Integer itemId = todoService.addTodoItem(todoItemDTO);
         UriComponents uriComponents = UriComponentsBuilder.fromPath("todo/{itemId}").buildAndExpand(itemId);
         URI location = uriComponents.toUri();
-
         return ResponseEntity.created(location).build();
     }
 
@@ -48,27 +46,21 @@ public class TodoController {
 
     @DeleteMapping("/todo/{itemId}")
     public ResponseEntity<?> detItem(@PathVariable Integer itemId){
-        if (todoService.delTodoItemById(itemId))
+        todoService.delTodoItemById(itemId);
             return new ResponseEntity<>(HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     // set status DONE
     @PostMapping("/todo/{itemId}/finish")
     public ResponseEntity<?> finishItem(@PathVariable int itemId){
-        if (todoService.finishTodoItemById(itemId))
-            return new ResponseEntity<>(HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        todoService.finishTodoItemById(itemId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // UPDATE
     @PutMapping(value="todo/{itemId}")
     public ResponseEntity<?> changeItem(@PathVariable int itemId, @RequestBody TodoItemDTO todoItemDTO){
-        if (todoService.updateTodoItem(itemId, todoItemDTO))
-            return new ResponseEntity<>(HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        todoService.updateTodoItem(itemId, todoItemDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -1,6 +1,7 @@
 package todolist;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,37 +21,36 @@ public class TodoService {
 
     public TodoItemDTO getTodoItemById(Integer id){
         Optional<TodoItem> todoItem = todoItemRepository.findById(id);
-        return todoItem.map(mapper::toDto).orElse(null);
+        if (todoItem.isEmpty()){
+            throw new NoSuchElementException("Item with id = " + id + " not found in DB");
+        } else
+            return todoItem.map(mapper::toDto).orElse(null);
     }
 
-    public boolean delTodoItemById(Integer id){
+    public void delTodoItemById(Integer id){
         if (todoItemRepository.findById(id).isPresent()) {
             todoItemRepository.deleteById(id);
-            return true;
-        }
-         else
-             return false;
+        } else
+            throw new NoSuchElementException("Item with id = " + id + " not found in DB");
     }
 
-    public boolean finishTodoItemById(Integer id){
+    public void finishTodoItemById(Integer id){
         Optional<TodoItem> todoItem = todoItemRepository.findById(id);
         if (todoItem.isPresent()) {
             TodoItem i = todoItem.get();
             i.setStatus(Status.DONE);
             todoItemRepository.save(i);
-            return true;
         } else
-            return false;
+            throw new NoSuchElementException("Item with id = " + id + " not found in DB");
     }
 
-    public boolean updateTodoItem(Integer id, TodoItemDTO todoItemDTO){
+    public void updateTodoItem(Integer id, TodoItemDTO todoItemDTO){
         Optional<TodoItem> todoItemFromDB = todoItemRepository.findById(id);
         if (todoItemFromDB.isPresent()){
             todoItemFromDB.get().setContent(todoItemDTO.getContent());
             todoItemRepository.save(todoItemFromDB.get());
-            return true;
         } else
-            return false;
+            throw new NoSuchElementException("Item with id = " + id + " not found in DB");
     }
 
     public List<TodoItemDTO> findTodoItemByStatus(Status status){
