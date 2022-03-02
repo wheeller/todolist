@@ -6,19 +6,21 @@ import java.time.OffsetDateTime;
 
 @Component
 public class Mapper {
+    // TodoItem
     public TodoItemDTO toDto(TodoItem todoItem){
         int id = todoItem.getId();
         String content = todoItem.getContent();
         Status status = todoItem.getStatus();
         OffsetDateTime createDateTime = todoItem.getCreateDateTime();
-
-        return new TodoItemDTO(id, content, status, createDateTime);
+        UserDTO userDTO = toUserDTO(todoItem.getUser());
+        return new TodoItemDTO(id, content, status, createDateTime, userDTO);
     }
 
     public TodoItem fromDto(TodoItemDTO todoItemDTO){
-        return new TodoItem(todoItemDTO.getContent());
+        return new TodoItem(todoItemDTO.getContent(), fromUserDto(todoItemDTO.getUserDTO()));
     }
 
+    // USER
     public UserDTO toUserDTO(User user) {
         Integer id = user.getId();
         String name = user.getName();

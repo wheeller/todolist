@@ -8,15 +8,19 @@ import java.util.stream.Collectors;
 @org.springframework.context.annotation.Configuration
 public class TodoService {
     final TodoItemRepository todoItemRepository;
+    final UserRepository userRepository;
     private final Mapper mapper;
 
-    public TodoService(Mapper mapper, TodoItemRepository todoItemRepository) {
+    public TodoService(Mapper mapper, TodoItemRepository todoItemRepository, UserRepository userRepository) {
         this.mapper = mapper;
         this.todoItemRepository = todoItemRepository;
+        this.userRepository = userRepository;
     }
 
     public Integer addTodoItem(TodoItemDTO todoItemDTO){
-        return todoItemRepository.save(mapper.fromDto(todoItemDTO)).getId();
+        TodoItem todoItem = new TodoItem(todoItemDTO.getContent(),
+                userRepository.findByName(todoItemDTO.getUserDTO().getName()).orElse(null));
+        return todoItemRepository.save(todoItem).getId();
     }
 
     public TodoItemDTO getTodoItemById(Integer id){

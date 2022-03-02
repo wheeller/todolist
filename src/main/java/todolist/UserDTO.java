@@ -7,6 +7,8 @@ public class UserDTO {
     private Integer id;
     private String name;
 
+    UserDTO(){}
+
     UserDTO(String name){
         this.name = name;
     }

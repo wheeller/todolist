@@ -3,7 +3,7 @@ package todolist;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +20,27 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     final Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
 
     // all repository exceptions
-    @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<Object> handleDataAccessException(DataAccessException ex, WebRequest webRequest){
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> handleRuntimeException(RuntimeException ex, WebRequest webRequest){
         logger.error("Error", ex);
         return handleExceptionInternal(ex
                 , new ExceptionResponseBody(ex.getClass().getSimpleName(), ex.getMessage())
                 , new HttpHeaders()
                 , HttpStatus.INTERNAL_SERVER_ERROR, webRequest);
+    }
+
+    // DataIntegrityViolationException extends NonTransientDataAccessException
+    // org.springframework.dao.DataIntegrityViolationException:
+    // not-null property references a null or transient value :
+    // todolist.TodoItem.user; nested exception is org.hibernate.PropertyValueException:
+    // not-null property references a null or transient value : todolist.TodoItem.user
+    @ExceptionHandler(NonTransientDataAccessException.class)
+    public ResponseEntity<Object> handleNonTransientDataAccessException(NonTransientDataAccessException ex, WebRequest webRequest){
+        logger.error(ex.getMessage());
+        return handleExceptionInternal(ex
+                , new ExceptionResponseBody("BAD_REQUEST", ex.getMessage())
+                , new HttpHeaders()
+                , HttpStatus.BAD_REQUEST, webRequest);
     }
 
     @ExceptionHandler(NoSuchElementException.class)

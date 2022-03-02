@@ -3,6 +3,7 @@ package todolist;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "user", schema = "my", catalog = "hibernatedb")
@@ -16,6 +17,9 @@ public class User {
     @Basic
     @Column(name = "name", nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<TodoItem> todoItemList;
 
     public User(){}
 

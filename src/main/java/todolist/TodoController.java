@@ -1,5 +1,7 @@
 package todolist;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,7 @@ import java.util.List;
 @RestController
 public class TodoController {
     final TodoService todoService;
+    final Logger logger = LoggerFactory.getLogger(TodoController.class);
 
  private TodoController(TodoService todoService) {
         this.todoService = todoService;
@@ -32,6 +35,7 @@ public class TodoController {
     // CREATE
     @PostMapping("/todo")
     public ResponseEntity<TodoItemDTO> createItem(@RequestBody TodoItemDTO todoItemDTO){
+        logger.debug(todoItemDTO.toString());
         Integer itemId = todoService.addTodoItem(todoItemDTO);
         UriComponents uriComponents = UriComponentsBuilder.fromPath("todo/{itemId}").buildAndExpand(itemId);
         URI location = uriComponents.toUri();
@@ -60,6 +64,7 @@ public class TodoController {
     // UPDATE
     @PutMapping(value="todo/{itemId}")
     public ResponseEntity<?> changeItem(@PathVariable int itemId, @RequestBody TodoItemDTO todoItemDTO){
+        logger.debug(todoItemDTO.toString());
         todoService.updateTodoItem(itemId, todoItemDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }

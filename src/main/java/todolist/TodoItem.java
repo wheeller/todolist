@@ -27,12 +27,17 @@ public class TodoItem {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="user_id", nullable = false)
+    private User user;
+
     public TodoItem() {
     }
 
-    public TodoItem(String content) {
+    public TodoItem(String content, User user) {
         this.createDateTime = java.time.OffsetDateTime.now();
         this.status = Status.NEW;
         this.content = Objects.requireNonNull(content);
+        this.user = user;
     }
 }
