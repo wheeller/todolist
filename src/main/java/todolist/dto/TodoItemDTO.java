@@ -1,5 +1,6 @@
-package todolist;
+package todolist.dto;
 import lombok.Data;
+import todolist.Status;
 
 import java.time.OffsetDateTime;
 
@@ -20,7 +21,7 @@ public class TodoItemDTO {
         this.userDTO = userDTO;
     }
 
-    TodoItemDTO(int id, String content, Status status, OffsetDateTime createDateTime, UserDTO userDTO){
+    public TodoItemDTO(int id, String content, Status status, OffsetDateTime createDateTime, UserDTO userDTO){
         this.id = id;
         this.content = content;
         this.status = status;

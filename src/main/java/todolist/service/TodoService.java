@@ -1,4 +1,11 @@
-package todolist;
+package todolist.service;
+
+import todolist.Mapper;
+import todolist.Status;
+import todolist.dto.TodoItemDTO;
+import todolist.entity.TodoItem;
+import todolist.repository.TodoItemRepository;
+import todolist.repository.UserRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;

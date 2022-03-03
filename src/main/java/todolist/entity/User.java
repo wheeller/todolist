@@ -1,4 +1,4 @@
-package todolist;
+package todolist.entity;
 
 import lombok.Data;
 

@@ -1,7 +1,10 @@
 package todolist;
 
 import org.springframework.stereotype.Component;
-
+import todolist.dto.TodoItemDTO;
+import todolist.dto.UserDTO;
+import todolist.entity.TodoItem;
+import todolist.entity.User;
 import java.time.OffsetDateTime;
 
 @Component

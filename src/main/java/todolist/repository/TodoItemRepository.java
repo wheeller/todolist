@@ -1,7 +1,8 @@
-package todolist;
+package todolist.repository;
 
 import org.springframework.data.repository.CrudRepository;
-
+import todolist.Status;
+import todolist.entity.TodoItem;
 import java.util.List;
 import java.util.Optional;
 

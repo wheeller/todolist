@@ -1,4 +1,4 @@
-package todolist;
+package todolist.dto;
 
 import lombok.Data;
 
@@ -13,7 +13,7 @@ public class UserDTO {
         this.name = name;
     }
 
-    UserDTO(Integer id, String name){
+    public UserDTO(Integer id, String name){
         this.id = id;
         this.name = name;
     }

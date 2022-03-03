@@ -1,7 +1,7 @@
-package todolist;
+package todolist.entity;
 
 import lombok.Data;
-
+import todolist.Status;
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Objects;
