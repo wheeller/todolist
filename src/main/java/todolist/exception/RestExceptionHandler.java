@@ -1,5 +1,6 @@
-package todolist;
+package todolist.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,16 +59,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 , new HttpHeaders()
                 , HttpStatus.BAD_REQUEST, webRequest);
     }
-}
 
-
-@Data
-class ExceptionResponseBody {
-    public String error;
-    public String description;
-
-    ExceptionResponseBody(String error, String text){
-        this.error = error;
-        this.description = text;
+    // JWT ExpiredJwtException
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException ex, WebRequest webRequest) {
+        return handleExceptionInternal(ex
+                , new ExceptionResponseBody("JWT_EXPIRED", ex.getMessage())
+                , new HttpHeaders()
+                , HttpStatus.NOT_FOUND, webRequest);
     }
 }
+
+

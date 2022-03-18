@@ -25,9 +25,7 @@ public class Mapper {
 
     // USER
     public UserDTO toUserDTO(User user) {
-        Integer id = user.getId();
-        String name = user.getName();
-        return new UserDTO(id, name);
+        return new UserDTO(user.getId(), user.getName(), null);
     }
 
     public User fromUserDto(UserDTO userDTO){

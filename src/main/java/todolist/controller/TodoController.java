@@ -34,7 +34,7 @@ public class TodoController {
         throw new IllegalArgumentException("status parameter is invalid, use NEW оr DONE");
     }
 
-    // CREATE
+    // CREATE takes content from body and user from token
     @PostMapping("/todo")
     public ResponseEntity<TodoItemDTO> createItem(@RequestBody TodoItemDTO todoItemDTO){
         logger.debug(todoItemDTO.toString());

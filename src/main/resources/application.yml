@@ -9,10 +9,18 @@ spring:
     username: 'postgres'
     password: 'password'
     url: jdbc:postgresql://localhost:5432/hibernatedb
+  mvc:
+    log-request-details: true
 
 logging:
   level:
     org.apache.util.net: WARN
-    todolist.SpringApp: TRACE
-    todolist.TodoController: TRACE
+#    todolist.SpringApp: TRACE
+#    todolist.TodoController: TRACE
+    todolist: debug
     org.springframework.web.servlet.DispatcherServlet: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+
+
+jwt.secret: asdfgh

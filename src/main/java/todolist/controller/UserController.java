@@ -18,7 +18,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    // GET all
+    // GET all without password
     @GetMapping("/user")
     public ResponseEntity<List<UserDTO>> getUserList(){
             return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);

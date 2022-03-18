@@ -6,15 +6,23 @@ import lombok.Data;
 public class UserDTO {
     private Integer id;
     private String name;
+    private String password;
 
-    UserDTO(){}
+    public UserDTO(){}
 
-    UserDTO(String name){
+    public UserDTO(String name, String password){
         this.name = name;
+        this.password = password;
     }
 
     public UserDTO(Integer id, String name){
         this.id = id;
         this.name = name;
+    }
+
+    public UserDTO(Integer id, String name, String password){
+        this.id = id;
+        this.name = name;
+        this.password = password;
     }
 }
