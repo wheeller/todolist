@@ -88,7 +88,12 @@ public class UserService {
     }
 
     public User getUserFromSCH(){
-        return userRepository.findByName(
-                SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null);
+        Optional<User> user = userRepository.findByName(
+                SecurityContextHolder.getContext().getAuthentication().getName());
+        if (user.isEmpty()){
+            throw new NoSuchElementException("User " + SecurityContextHolder.getContext().getAuthentication()
+                    .getName() + " not found in DB");
+        } else
+            return user.orElse(null);
     }
 }
