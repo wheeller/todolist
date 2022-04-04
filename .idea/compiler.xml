@@ -7,13 +7,19 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="todoList" />
+        <module name="email-lib" />
+        <module name="todoapp" />
+        <module name="email" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="todoList" options="-parameters" />
+      <module name="email" options="-parameters" />
+      <module name="email-lib" options="-parameters" />
+      <module name="join-libs" options="" />
+      <module name="todoList" options="" />
+      <module name="todoapp" options="-parameters" />
     </option>
   </component>
 </project>
