@@ -1,0 +1,24 @@
+spring:
+  mail:
+    host: smtp.mail.ru
+    port: 465
+    username: thunderbass@mail.ru
+    password: CF6fx0GHxN8wQPqKQszh
+    properties:
+      mail:
+        smtp:
+          auth: true
+#          starttls.enable: true
+          transport.protocol: smtp
+          socketFactory.port: 465
+          socketFactory.class: javax.net.ssl.SSLSocketFactory
+          socketFactory.fallback: false
+          ssl.enable: true
+        debug: true
+
+server:
+  port: 8081
+
+logging:
+  level:
+    org.springframework.mail: trace
