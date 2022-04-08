@@ -20,14 +20,9 @@ import java.util.List;
 public class TodoController {
     final TodoService todoService;
     final Logger logger = LoggerFactory.getLogger(TodoController.class);
-    final EmailSender emailSender;
 
-    @Value("${email.url}")
-    private String emailUrl;
-
- private TodoController(TodoService todoService, EmailSender emailSender) {
+ private TodoController(TodoService todoService) {
      this.todoService = todoService;
-     this.emailSender = emailSender;
  }
 
     // GET all
@@ -77,11 +72,5 @@ public class TodoController {
         logger.debug(todoItemDTO.toString());
         todoService.updateTodoItem(itemId, todoItemDTO);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    // Email report
-    @GetMapping("/report")
-    public ResponseEntity<?> report() {
-        return emailSender.sendMessage(emailUrl, todoService.genReport());
     }
 }
