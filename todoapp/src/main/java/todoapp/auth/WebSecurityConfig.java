@@ -12,7 +12,7 @@ import org.springframework.web.filter.CorsFilter;
 import todoapp.exception.ExceptionHandlerFilter;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     final TokenService tokenService;
 

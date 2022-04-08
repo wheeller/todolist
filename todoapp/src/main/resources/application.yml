@@ -18,9 +18,9 @@ logging:
 #    todolist.SpringApp: TRACE
 #    todolist.TodoController: TRACE
     todolist: debug
-    org.springframework.web.servlet.DispatcherServlet: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+#    org.springframework.web.servlet.DispatcherServlet: DEBUG
+#    org.springframework.security: DEBUG
+#    org.springframework.web: DEBUG
 
 
 # vars
