@@ -22,6 +22,10 @@ logging:
 #    org.springframework.security: DEBUG
 #    org.springframework.web: DEBUG
 
+# email or rabbit
+todoapp:
+  controller:
+    message-service: rabbit
 
 # vars
 jwt.secret: asdfgh

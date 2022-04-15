@@ -6,12 +6,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.ImmediateAcknowledgeAmqpException;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Component;
 
 
 @EnableRabbit
 @Component
+@ConditionalOnProperty(
+        value="email.message-service",
+        havingValue = "rabbit")
 public class RabbitMqListener {
     final EmailService emailService;
     Logger logger = LoggerFactory.getLogger(RabbitMqListener.class);
