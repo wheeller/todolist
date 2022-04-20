@@ -8,7 +8,6 @@ import todoapp.Status;
 import todoapp.dto.TodoItemDTO;
 import todoapp.entity.TodoItem;
 import todoapp.repository.TodoItemRepository;
-import todoapp.repository.UserRepository;
 
 import java.time.Duration;
 import java.util.List;

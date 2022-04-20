@@ -1,30 +1,49 @@
 package email;
 
-import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
-import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
+
 
 @Configuration
-public class RabbitConfiguration implements RabbitListenerConfigurer {
+public class RabbitConfiguration {
+
+//    DLQ (Dead Letter Queue)
+    public static final String DLX_MESSAGES_EXCHANGE = "DLX.MESSAGES.EXCHANGE";
+    public static final String DLQ_MESSAGES_QUEUE = "DLQ.MESSAGES.QUEUE";
+    public static final String MESSAGES_QUEUE = "MESSAGES.QUEUE";
+    public static final String MESSAGES_EXCHANGE = "MESSAGES.EXCHANGE";
+    public static final String ROUTING_KEY_MESSAGES_QUEUE = "ROUTING_KEY_MESSAGES_QUEUE";
 
     @Bean
-    public MappingJackson2MessageConverter jackson2Converter() {
-        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-        return converter;
+    Queue messagesQueue() {
+        return QueueBuilder.durable(MESSAGES_QUEUE)
+                .withArgument("x-dead-letter-exchange", DLX_MESSAGES_EXCHANGE)
+                .build();
     }
 
     @Bean
-    public DefaultMessageHandlerMethodFactory myHandlerMethodFactory() {
-        DefaultMessageHandlerMethodFactory factory = new DefaultMessageHandlerMethodFactory();
-        factory.setMessageConverter(jackson2Converter());
-        return factory;
+    DirectExchange messagesExchange() {
+        return new DirectExchange(MESSAGES_EXCHANGE);
     }
 
-    @Override
-    public void configureRabbitListeners(RabbitListenerEndpointRegistrar registrar) {
-        registrar.setMessageHandlerMethodFactory(myHandlerMethodFactory());
+    @Bean
+    Binding bindingMessages() {
+        return BindingBuilder.bind(messagesQueue()).to(messagesExchange()).with(ROUTING_KEY_MESSAGES_QUEUE);
+    }
+
+    @Bean
+    FanoutExchange deadLetterExchange() {
+        return new FanoutExchange(DLX_MESSAGES_EXCHANGE);
+    }
+
+    @Bean
+    Queue deadLetterQueue() {
+        return QueueBuilder.durable(DLQ_MESSAGES_QUEUE).build();
+    }
+
+    @Bean
+    Binding deadLetterBinding() {
+        return BindingBuilder.bind(deadLetterQueue()).to(deadLetterExchange());
     }
 }
