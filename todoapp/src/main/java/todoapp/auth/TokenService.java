@@ -16,16 +16,13 @@ import java.util.UUID;
 @Service
 public class TokenService {
 
-    private final String secret;
-
-    public TokenService(@Value("${jwt.secret}") String secret) {
-        this.secret = secret;
-    }
+    @Value("${jwt.secret}")         private String secret;
+    @Value("${jwt.expireMinutes}")  private long expireMinutes;
 
     public String generateToken(UserDTO userDTO) {
         String id = UUID.randomUUID().toString().replace("-", "");
         Date now = new Date();
-        Date exp = Date.from(LocalDateTime.now().plusMinutes(30)
+        Date exp = Date.from(LocalDateTime.now().plusMinutes(expireMinutes)
                 .atZone(ZoneId.systemDefault()).toInstant());
 
         String token = Jwts.builder()

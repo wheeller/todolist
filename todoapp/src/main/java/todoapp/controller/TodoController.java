@@ -3,7 +3,6 @@ package todoapp.controller;
 import lib.email.EmailSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +18,12 @@ import java.util.List;
 @RestController
 public class TodoController {
     final TodoService todoService;
+    final EmailSender emailSender;
     final Logger logger = LoggerFactory.getLogger(TodoController.class);
 
- private TodoController(TodoService todoService) {
+ private TodoController(TodoService todoService, EmailSender emailSender) {
      this.todoService = todoService;
+     this.emailSender = emailSender;
  }
 
     // GET all
@@ -72,5 +73,11 @@ public class TodoController {
         logger.debug(todoItemDTO.toString());
         todoService.updateTodoItem(itemId, todoItemDTO);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // REPORT
+    @GetMapping("/todo/report")
+    public ResponseEntity<?> report(){
+        return emailSender.send(todoService.genReport());
     }
 }
