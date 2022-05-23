@@ -18,13 +18,13 @@ public class RestSender implements EmailSender {
 
     @Value("${lib.email.url}") private String url;
 
-    public ResponseEntity<?> send(EmailMessageDTO emailMessageDTO) {
+    public void send(EmailMessageDTO emailMessageDTO) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<?> entity = new HttpEntity<>(emailMessageDTO, headers);
-        return restTemplate.postForObject(url, entity, ResponseEntity.class);
+        restTemplate.postForObject(url, entity, ResponseEntity.class);
     }
 }
 

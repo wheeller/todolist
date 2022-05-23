@@ -1,6 +1,7 @@
 package todoapp.repository;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import todoapp.Status;
 import todoapp.entity.TodoItem;
 import todoapp.entity.User;

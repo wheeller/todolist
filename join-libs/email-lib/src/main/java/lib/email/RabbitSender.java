@@ -7,8 +7,6 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import static lib.email.RabbitConfiguration.MESSAGES_EXCHANGE;
@@ -27,7 +25,7 @@ public class RabbitSender implements EmailSender{
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public ResponseEntity<?> send(EmailMessageDTO messageDTO){
+    public void send(EmailMessageDTO messageDTO){
         SimpleMessageConverter converter = new SimpleMessageConverter();
         MessageProperties messageProperties = new MessageProperties();
         messageProperties.setHeader("To", messageDTO.getTo());
@@ -37,6 +35,5 @@ public class RabbitSender implements EmailSender{
 
         rabbitTemplate.convertAndSend(MESSAGES_EXCHANGE, ROUTING_KEY_MESSAGES_QUEUE, message);
         logger.info("Message send {}", message);
-        return new ResponseEntity<>("Report put in queue", HttpStatus.OK);
     }
 }

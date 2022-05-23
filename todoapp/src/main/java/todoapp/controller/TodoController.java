@@ -78,6 +78,7 @@ public class TodoController {
     // REPORT
     @GetMapping("/todo/report")
     public ResponseEntity<?> report(){
-        return emailSender.send(todoService.genReport());
+        emailSender.send(todoService.genReport());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
