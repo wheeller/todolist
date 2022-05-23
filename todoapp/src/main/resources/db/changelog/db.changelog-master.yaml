@@ -1,0 +1,80 @@
+databaseChangeLog:
+  - logicalFilePath: db.changelog/db.changelog-start.yaml
+  - changeSet:
+      id: userTable
+      author: AndreyS
+      comment: "Create table user"
+      changes:
+        - createTable:
+            tableName: user
+            tableSchemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyName: PK_USER
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(50)
+      rollback:
+        - dropTable:
+            cascadeConstraints:  true
+            tableName: user
+
+  - changeSet:
+      id: todoItemTable
+      author: AndreyS
+      comment: "Create table todoitem"
+      changes:
+        - createTable:
+            tableName: todoitem
+            tableSchemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyName: PK_TODOITEM
+              - column:
+                  name: create_date_time
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: finish_date_time
+                  type: timestamptz
+              - column:
+                  name: status
+                  type: varchar(8)
+              - column:
+                  name: content
+                  type: varchar(255)
+              - column:
+                  name: user_id
+                  type: integer
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_todoitem_user
+                    references: user(id)
+      rollback:
+        - dropTable:
+            cascadeConstraints:  true
+            tableName: todoitem

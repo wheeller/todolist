@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "todoItem", schema = "my", catalog = "hibernatedb")
+@Table(name = "todoitem", schema = "public", catalog = "hibernatedb")
 @Data
 public class TodoItem {
     @Id

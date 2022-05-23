@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "user", schema = "my", catalog = "hibernatedb")
+@Table(name = "user", schema = "public", catalog = "hibernatedb")
 @Data
 public class User implements UserDetails {
     @Id
