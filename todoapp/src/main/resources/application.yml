@@ -8,9 +8,12 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: 'postgres'
     password: 'password'
-    url: jdbc:postgresql://localhost:5432/hibernatedb
+    url: jdbc:postgresql://postgres:5432/todoapp
   mvc:
     log-request-details: true
+  rabbitmq:
+    host: rabbit
+    port: 5672
 
 logging:
   level:
@@ -22,10 +25,11 @@ logging:
 #    org.springframework.security: DEBUG
 #    org.springframework.web: DEBUG
     org.liquibase: debug
+    org.springframework.amqp: debug
 
 # vars
 jwt.secret: asdfgh
 jwt.expireMinutes: 600
 
-lib.email.url: 'http://localhost:8081/email'
-lib.email.message-service: email   # email or rabbit
+lib.email.url: 'http://email:8081/email'
+lib.email.message-service: rabbit   # email or rabbit

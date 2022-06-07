@@ -1,0 +1,46 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:13.7-alpine
+    restart: on-failure
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: todoapp
+    ports:
+      - "5432:5432"
+  rabbit:
+    image: rabbitmq:3.10-alpine
+    restart: on-failure
+    container_name: rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+  todoapp:
+    build: todoapp/
+    image: todoapp:0.0.1
+    restart: always
+    container_name: todoapp
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "postgres"
+      - "rabbit"
+      - "email"
+  email:
+    build: email/
+    image: email:0.0.1
+    restart: always
+    container_name: email
+#    ports:
+#     - "8081:8081"
+    depends_on:
+      - "rabbit"
+
+
